@@ -6,6 +6,7 @@ import pyjokes
 import webbrowser
 import datetime
 import wikipedia
+import abrir_historias
 
 #Opciones de voz / idioma
 id1 = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_ES-MX_SABINA_11.0'
@@ -121,7 +122,89 @@ def pedir_hora():
     #Decir la hora
     hablar(hora)
 
-pedir_hora()
+#Hacer un saludo inicial
+def saludo_inicial():
+
+    #Crear variable con datos de hora
+    hora = datetime.datetime.now()
+    if hora.hour < 6 or hora.hour > 20:
+        momento = f'Hola, Explicame ¿qué hacés trabajando a las {hora.hour} horas? '
+    elif 6 <= hora.hour < 13:
+        momento = f'Hola, Estas en un horario razonable de trabajo, son las {hora.hour} horas y {hora.minute}.'
+    else:
+        momento = 'Hola, Estas en un horario que ya podrias ir pensando en irte a tu casa y dejar de joder'
+
+
+    #Decir el saludo
+    hablar(f'{momento}, Son las {hora.hour} horas y {hora.minute} minutos. Soy margaríta, la hija de Kuki.'
+           f' Trabajo mejor en grupo pediátrico que vos.'
+           f'Por mas que todavía no se hablar, el tío Juan (Que en verdad es mi papá) y es mejor que maxi, me '
+           f'esta dando una inteligencia superior a la tuya.'
+           f' Por favor, decime ¿en qué te puedo ayudar?.')
+
+#Funcion central del asistente
+def pedir_cosas():
+
+    #Activar el saludo inicial
+    saludo_inicial()
+
+    #Variable de corte
+    comenzar = True
+
+    #Loop central
+    while comenzar:
+
+        #Activar el microfono y guardar el pedido en un string
+        pedido = transformar_audio_en_texto().lower()
+
+        if 'abrir youtube' in pedido:
+            hablar('Por mas que abra youtube, nacho lo bloqueo. Ponete a laburar hijo de puta')
+            webbrowser.open('https://www.youtube.com')
+            continue
+        elif 'abrir google' in pedido:
+            hablar('Ahora lo abro, pero espero que no sea para boludear. No lo quiero a Maxi')
+            webbrowser.open('https://www.google.com')
+            continue
+        elif 'abrir gomedisys' in pedido:
+            hablar('Me gusta que no boludees y trabajes, abriendo gomedysis. Nacho estaria muy orgulloso de vos')
+            webbrowser.open('https://gomedisys.welii.com/')
+            continue
+        elif 'qué día es hoy' in pedido:
+            pedir_dia()
+            continue
+        elif 'qué hora es' in pedido:
+            pedir_hora()
+            continue
+        elif 'descárgame las historias' in pedido:
+            hablar('Era hora que te pongas a trabajar. Ahí las descargo, mandale saludos a papá')
+            abrir_historias.descargar_historias()
+            continue
+        elif 'margarita buscar sobre' in pedido:
+            pedido = pedido.replace('margaríta buscar sobre', '')
+            hablar(f'Buscando sobre {pedido}, espero que sea algo de medicína')
+            wikipedia.set_lang('es')
+            resultado = wikipedia.summary(pedido, sentences=1)
+            hablar('No es de medícina, pero por ahora la voy a dejar pasar, maxi se la come.')
+
+            hablar(resultado)
+            continue
+
+
+pedir_cosas()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
