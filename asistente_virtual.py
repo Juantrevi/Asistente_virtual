@@ -23,6 +23,7 @@ def transformar_audio_en_texto():
         #Pequeño tiempo de espera desde que se activa el volumen a empezar a escuchar
         r.pause_threshold = 0.8
 
+
         #Informar que comenzo la grabacion
         print('Ya puedes hablar')
 
@@ -136,11 +137,12 @@ def saludo_inicial():
 
 
     #Decir el saludo
-    hablar(f'{momento}, Son las {hora.hour} horas y {hora.minute} minutos. Soy margaríta, la hija de Kuki.'
-           f' Trabajo mejor en grupo pediátrico que vos.'
-           f'Por mas que todavía no se hablar, el tío Juan (Que en verdad es mi papá) y es mejor que maxi, me '
-           f'esta dando una inteligencia superior a la tuya.'
-           f' Por favor, decime ¿en qué te puedo ayudar?.')
+    hablar('Por favor, decime ¿en qué te puedo ayudar?')
+    # {momento}, Son las {hora.hour} horas y {hora.minute} minutos. Soy margaríta, la hija de Kuki.'
+    #        f' Trabajo mejor en grupo pediátrico que vos.'
+    #        f'Por mas que todavía no se hablar, el tío Juan (Que en verdad es mi papá) y es mejor que maxi, me '
+    #        f'esta dando una inteligencia superior a la tuya.'
+
 
 #Funcion central del asistente
 def pedir_cosas():
@@ -188,6 +190,34 @@ def pedir_cosas():
 
             hablar(resultado)
             continue
+        elif 'busca en internet' in pedido:
+            hablar('Ya estoy en eso')
+            pedido = pedido.replace('busca en internet', '')
+            pywhatkit.search(pedido)
+            hablar("Esto es lo que encontre")
+            continue
+        elif 'reproducir' in pedido:
+            hablar('Bueno, ahora empieza... AGARRATE')
+            pywhatkit.playonyt(pedido)
+            continue
+        elif 'chiste' in pedido:
+            hablar(pyjokes.get_joke('es'))
+            continue
+        elif 'precio de las acciones' in pedido:
+            accion = pedido.split('de')[-1].strip()
+            cartera = {'apple':'APPL', 'amazon':'AMZN', 'google':'GOOGL'}
+            try:
+                accion_buscada = cartera[accion]
+                accion_buscada = yf.Ticker(accion_buscada)
+                precio_actual = accion_buscada.info['regularMarketPrice']
+                hablar(f'La encontre, el precio de {accion} es {precio_actual}')
+                continue
+            except:
+                    hablar('Perdon, pero no la he encontrado')
+                    continue
+        elif 'adiós' in pedido:
+            hablar('Me voy a descansar, cualquier cosa me avisas')
+            break
 
 
 pedir_cosas()
